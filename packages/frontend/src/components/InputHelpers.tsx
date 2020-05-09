@@ -3,8 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Slider, Input, Select, MenuItem } from "@material-ui/core";
 import { useDrag } from "react-use-gesture";
 
-import { Block } from "./BlockEditor";
 import { useDefaultInputImages } from "../inputImages";
+import { Block } from "@challenge-cvedu/common";
 
 const useStyles = makeStyles(theme => ({
   numberHelper: {

@@ -4,14 +4,17 @@
   (...hopefully)
 */
 
+import { BlockTemplate } from "./BlockTypes";
+import { CVBlockInfo, CVIOPortInfo } from "./CVBlockInfo";
+
 export type ResponseStatus<T = null, E extends string = string> =
   | { status: "error"; error: E }
   | { status: "ok"; data: T };
 
 export interface Endpoints {
-  "GET /test": {
+  "GET /templates": {
     params: {};
-    res: ResponseStatus<string>;
+    res: ResponseStatus<BlockTemplate<CVBlockInfo, CVIOPortInfo>[]>;
     req: null;
   };
 }

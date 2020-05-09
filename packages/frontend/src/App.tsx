@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import { useAutoMemo, useAutoCallback, useAutoEffect } from "hooks.macro";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
@@ -19,7 +19,7 @@ import { templatesInitial } from "./templates";
 import { usePeriodicRerender, usePersistState } from "./utils";
 import { getFunctionFromCode } from "./codeUtils";
 import { maskToImageData, accumulatorToImageData } from "./videoUtils";
-import BlockEditor, { Block, Link, IOPortInst } from "./components/BlockEditor";
+import BlockEditor from "./components/BlockEditor";
 import {
   NumberIOHelper,
   StringIOHelper,
@@ -30,6 +30,14 @@ import { InputDialog } from "./components/InputDialog";
 import CodeEditor from "./components/CodeEditor";
 import CanvasOutput from "./components/CanvasOutput";
 import Game from "./components/Game";
+import { useRemoteData, emptyParams } from "./api/hooks";
+import {
+  CVBlockInfo,
+  CVIOPortInfo,
+  Block,
+  Link,
+  IOPortInst,
+} from "@challenge-cvedu/common";
 
 import "./globalStyles.css";
 
@@ -82,21 +90,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export type BlockInfo = {
-  code: string;
-  solution: string;
-  solutionPassword: string;
-  fn: any;
-  customInput: boolean;
-};
-export type ValueType =
-  | "string"
-  | "number"
-  | "imagedata"
-  | "mask"
-  | "accumulator";
-export type IOPortInfo = { valueType: ValueType };
-
 export default function App() {
   const classes = useStyles({});
 
@@ -110,7 +103,15 @@ export default function App() {
     setCurrentError(null);
   }
 
-  const [templates, setTemplates] = useState(templatesInitial);
+  const remoteTemplates = useRemoteData("GET /templates", emptyParams);
+  const templates = useMemo(
+    () =>
+      remoteTemplates && remoteTemplates.status === "ok"
+        ? [...templatesInitial, ...remoteTemplates.data]
+        : templatesInitial,
+    [remoteTemplates]
+  );
+  // const [templates, setTemplates] = useState(templatesInitial);
 
   const [addBlockDialogOpen, setAddBlockDialogOpen] = useState(false);
   const handleOpenAddBlockDialog = useCallback(
@@ -137,9 +138,9 @@ export default function App() {
     // setAddBlockDialogOpen(false);
   }, []);
 
-  const [blocks, setBlocks] = useState<Block<BlockInfo, IOPortInfo>[]>([]);
+  const [blocks, setBlocks] = useState<Block<CVBlockInfo, CVIOPortInfo>[]>([]);
   const reHydrateBlocks = useCallback(
-    (blocks: Block<BlockInfo, IOPortInfo>[]) => {
+    (blocks: Block<CVBlockInfo, CVIOPortInfo>[]) => {
       const nBlocks = blocks.map(b => ({
         ...templates.find(t => t.type === b.type),
         ...b,
@@ -158,20 +159,20 @@ export default function App() {
   >([]);
   usePersistState(blocksPos, setBlocksPos, "blocksPos");
 
-  const [links, setLinks] = useState<(Link<IOPortInfo> | false)[]>([]);
+  const [links, setLinks] = useState<(Link<CVIOPortInfo> | false)[]>([]);
   usePersistState(links, setLinks, "links");
   useAutoEffect(() => {
     if (!links.every(l => l !== false)) {
       setCurrentError("Incompatible Types");
     }
   });
-  const validLinks: Link<IOPortInfo>[] = useAutoMemo(
-    () => links.filter(l => l !== false) as Link<IOPortInfo>[]
+  const validLinks: Link<CVIOPortInfo>[] = useAutoMemo(
+    () => links.filter(l => l !== false) as Link<CVIOPortInfo>[]
   );
 
   const handleUpdateLinks = useAutoCallback(
-    (fn: (prev: Link<IOPortInfo>[]) => Link<IOPortInfo>[]) => {
-      function linkValid(link: Link<IOPortInfo>) {
+    (fn: (prev: Link<CVIOPortInfo>[]) => Link<CVIOPortInfo>[]) => {
+      function linkValid(link: Link<CVIOPortInfo>) {
         if (!link.dst || !link.src.valueType) {
           return true;
         } else if (link.src.valueType !== link.dst.valueType) {
@@ -182,7 +183,9 @@ export default function App() {
       }
 
       setLinks(old => {
-        const newLinks = fn(old.filter(l => l !== false) as Link<IOPortInfo>[]);
+        const newLinks = fn(
+          old.filter(l => l !== false) as Link<CVIOPortInfo>[]
+        );
         return newLinks.map(l => (linkValid(l) ? l : false));
       });
     }
@@ -303,7 +306,7 @@ export default function App() {
 
     tempResultsRef.current = {};
 
-    function getNodeParams(b: Block<BlockInfo, IOPortInfo>) {
+    function getNodeParams(b: Block<CVBlockInfo, CVIOPortInfo>) {
       if (!b) return false;
 
       const params: any = {};
@@ -415,7 +418,7 @@ export default function App() {
   const updateIndex = usePeriodicRerender(100);
 
   const renderIODecoration = useCallback(
-    (port: IOPortInst<IOPortInfo>) => {
+    (port: IOPortInst<CVIOPortInfo>) => {
       const value =
         tempResultsRef.current[port.blockUuid] &&
         tempResultsRef.current[port.blockUuid][port.label];
