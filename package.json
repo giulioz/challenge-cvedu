@@ -1,0 +1,44 @@
+{
+  "name": "challenge-cvedu",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/giulioz/challenge-cvedu.git",
+  "author": "Giulio Zausa <mail.zausa.giulio@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@yarnpkg/pnpify": "^2.0.0-rc.20",
+    "concurrently": "^5.1.0",
+    "eslint": "^6.8.0",
+    "husky": "^4.2.3",
+    "lerna": "^3.20.2",
+    "prettier": "^1.19.1",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "start": "npm run start-backend",
+    "start-frontend": "lerna run start --scope @challenge-cvedu/frontend",
+    "start-backend": "lerna run start --scope @challenge-cvedu/backend",
+    "dev": "concurrently --kill-others \"npm run dev-frontend\" \"npm run dev-backend\" \"npm run dev-common\"",
+    "dev-frontend": "lerna run dev --scope @challenge-cvedu/frontend",
+    "dev-backend": "lerna run dev --scope @challenge-cvedu/backend",
+    "dev-common": "lerna run dev --scope @challenge-cvedu/common",
+    "build": "yarn build-common && concurrently \"yarn build-backend\" \"yarn build-frontend\"",
+    "build-backend": "lerna run build --scope @challenge-cvedu/backend",
+    "build-common": "lerna run build --scope @challenge-cvedu/common",
+    "build-frontend": "lerna run build --scope @challenge-cvedu/frontend",
+    "docker-build": "docker build -t challenge-cvedu .",
+    "docker-run": "npm run docker-build && docker-compose up",
+    "format": "lerna run format",
+    "lint": "lerna run lint",
+    "test": "lerna run test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lerna run --concurrency 1 --stream precommit"
+    }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

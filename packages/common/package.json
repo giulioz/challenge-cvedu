@@ -1,0 +1,40 @@
+{
+  "name": "@challenge-cvedu/common",
+  "version": "1.0.0",
+  "author": "Giulio Zausa <mail.zausa.giulio@gmail.com>",
+  "homepage": "https://github.com/giulioz/challenge-cvedu#readme",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giulioz/challenge-cvedu.git"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.5",
+    "@types/uuid": "^7.0.0",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.8.0",
+    "eslint-import-resolver-node": "^0.3.3",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^24.9.0",
+    "lint-staged": "^10.0.8",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.3.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "jest",
+    "lint": "eslint --ext js,ts,tsx src",
+    "format": "prettier --list-different --write \"{scripts,src}/**/*.{js,md,tsx,ts,html,json}\"",
+    "precommit": "lint-staged"
+  }
+}
