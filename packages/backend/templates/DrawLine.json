@@ -1,0 +1,31 @@
+{
+  "type": "DrawLine",
+  "hardcoded": false,
+  "customInput": false,
+  "solution": "function DrawLine({\n    Frame,\n    A,\n    R\n  }: {\n    Frame: ImageData;\n    A: number;\n    R: number;\n  }): { Frame: ImageData } {\n    const newData = new ImageData(Frame.width, Frame.height);\n  \n    for (let i = 0; i < Frame.data.length; i += 4) {\n      const R = Frame.data[i];\n      const G = Frame.data[i + 1];\n      const B = Frame.data[i + 2];\n  \n      newData.data[i] = R;\n      newData.data[i + 1] = G;\n      newData.data[i + 2] = B;\n      newData.data[i + 3] = 255;\n    }\n  \n    A = -A - (90 * Math.PI) / 180;\n  \n    for (let x = 0; x < Frame.width; x++) {\n      const px = (x * 2) / Frame.width - 1;\n      const s = Frame.width / Math.cos(A);\n      const py = px * Math.sin(A) * s;\n  \n      const y = Math.round(Frame.height / 2 - py / 2);\n      const i = (x + y * Frame.width) * 4;\n      newData.data[i] = 255;\n      newData.data[i + 1] = 255;\n      newData.data[i + 2] = 255;\n    }\n  \n    return { Frame: newData };\n  }",
+  "solutionPassword": "test",
+  "inputs": [
+    {
+      "label": "Frame",
+      "type": "input",
+      "valueType": "imagedata"
+    },
+    {
+      "label": "A",
+      "type": "input",
+      "valueType": "number"
+    },
+    {
+      "label": "R",
+      "type": "input",
+      "valueType": "number"
+    }
+  ],
+  "outputs": [
+    {
+      "label": "Frame",
+      "type": "output",
+      "valueType": "imagedata"
+    }
+  ]
+}

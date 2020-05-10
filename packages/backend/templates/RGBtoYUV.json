@@ -1,0 +1,21 @@
+{
+  "type": "RGBtoYUV",
+  "hardcoded": false,
+  "customInput": false,
+  "solution": "function RGBtoYUV({ Frame }: { Frame: ImageData }):{ YUVFrame: ImageData } {\r\n  // Copia i pixel dell'immagine\r\n  const newData = new ImageData(Frame.width, Frame.height);\r\n\r\n  // Per ogni pixel...\r\n  for (let i = 0; i < Frame.data.length; i += 4) {\r\n    // Estrae i valori di RGB\r\n    const R = Frame.data[i];\r\n    const G = Frame.data[i + 1];\r\n    const B = Frame.data[i + 2];\r\n\r\n    // Calcola i valori di YUV applicando una moltiplicazione matriciale\r\n    const Y = 0.257 * R + 0.504 * G + 0.098 * B + 16;\r\n    const U = -0.148 * R - 0.291 * G + 0.439 * B + 128;\r\n    const V = 0.439 * R - 0.368 * G - 0.071 * B + 128;\r\n\r\n    // Salva i valori di YUV sulla copia dell'immagine\r\n    newData.data[i] = Y;\r\n    newData.data[i + 1] = U;\r\n    newData.data[i + 2] = V;\r\n    newData.data[i + 3] = 255;\r\n  }\r\n\r\n  return { YUVFrame: newData };\r\n}",
+  "solutionPassword": "test",
+  "inputs": [
+    {
+      "label": "Frame",
+      "type": "input",
+      "valueType": "imagedata"
+    }
+  ],
+  "outputs": [
+    {
+      "label": "YUVFrame",
+      "type": "output",
+      "valueType": "imagedata"
+    }
+  ]
+}

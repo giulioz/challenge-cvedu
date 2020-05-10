@@ -1,9 +1,10 @@
 export type CVBlockInfo = {
-  code: string;
+  hardcoded?: boolean;
+  code?: string;
   solution?: string;
   solutionPassword?: string;
   fn?: any;
-  customInput: boolean;
+  customInput?: boolean;
 };
 
 export type CVValueType =

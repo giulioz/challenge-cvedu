@@ -15,8 +15,6 @@ export type BlockTemplate<
   TPortType = IOPortTemplate<TPortInfo>
 > = {
   type: string;
-  hardcoded: boolean;
-  code: string;
   inputs: TPortType[];
   outputs: TPortType[];
   color?: string;
