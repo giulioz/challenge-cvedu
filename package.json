@@ -16,7 +16,7 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "start": "npm run start-backend",
+    "start": "NODE_ENV=production npm run start-backend",
     "start-frontend": "lerna run start --scope @challenge-cvedu/frontend",
     "start-backend": "lerna run start --scope @challenge-cvedu/backend",
     "dev": "concurrently --kill-others \"npm run dev-frontend\" \"npm run dev-backend\" \"npm run dev-common\"",
