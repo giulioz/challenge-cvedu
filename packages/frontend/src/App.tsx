@@ -38,7 +38,7 @@ import CodeEditor from "./components/CodeEditor";
 import CanvasOutput from "./components/CanvasOutput";
 import Game from "./components/Game";
 import { useTemplates } from "./api/hooks";
-import { initialBlocksPos, initialBlocks } from "./initialState";
+import { initialBlocksPos, initialBlocks, initialLinks } from "./initialState";
 import apiCall from "./api/apiCall";
 import {
   CVBlockInfo,
@@ -190,7 +190,9 @@ export default function App() {
   >(initialBlocksPos);
   usePersistState(blocksPos, setBlocksPos, "blocksPos");
 
-  const [links, setLinks] = useState<(Link<CVIOPortInfo> | false)[]>([]);
+  const [links, setLinks] = useState<(Link<CVIOPortInfo> | false)[]>(
+    initialLinks as any
+  );
   usePersistState(links, setLinks, "links");
   useAutoEffect(() => {
     if (!links.every(l => l !== false)) {
