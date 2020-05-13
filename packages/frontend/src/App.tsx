@@ -112,6 +112,10 @@ function IntroDialog() {
           them using your mouse. You can edit block's code clicking on them,
           using the embedded editor. If you feel really stuck you can check the
           solution. Ask the teacher for the password.
+          <br />
+          <br />
+          The blocks are already configured for a Chrome Key example. You have
+          to complete the code for ChromaKeyUV and ChromaComposite.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
