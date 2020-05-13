@@ -3,7 +3,6 @@
   "hardcoded": false,
   "customInput": false,
   "solution": "function ChromaComposite({\r\n    Mask,\r\n    FrameA,\r\n    FrameB,\r\n  }: {\r\n    Mask: {data:boolean[];width:number;height:number};\r\n    FrameA: ImageData;\r\n    FrameB: ImageData\r\n  }): { Frame: ImageData } {\r\n    // Copia i pixel dell'immagine\r\n    const newData = new ImageData(FrameA.width, FrameA.height);\r\n  \r\n    for (let i = 0; i < FrameA.data.length; i += 4) {\r\n      if (Mask.data[i / 4]) {\r\n        newData.data[i] = FrameA.data[i];\r\n        newData.data[i + 1] = FrameA.data[i + 1];\r\n        newData.data[i + 2] = FrameA.data[i + 2];\r\n      } else {\r\n        newData.data[i] = FrameB.data[i]\r\n        newData.data[i + 1] = FrameB.data[i + 1]\r\n        newData.data[i + 2] = FrameB.data[i + 2]\r\n      }\r\n\r\n      newData.data[i + 3] = 255;\r\n    }\r\n  \r\n    return { Frame: newData };\r\n  }",
-  "solutionPassword": "test",
   "inputs": [
     {
       "label": "Mask",

@@ -4,7 +4,6 @@ import {
   CVBlockInfo,
   CVIOPortInfo,
 } from "@challenge-cvedu/common/src/CVBlockInfo";
-import { formatCode, getFunctionFromCode } from "./codeUtils";
 import {
   NumberInputHelper,
   UVInputHelper,
@@ -17,9 +16,6 @@ export const templatesInitial: BlockTemplate<CVBlockInfo, CVIOPortInfo>[] = [
     type: "CameraInput",
     hardcoded: true,
     customInput: false,
-    code: "",
-    solution: "",
-    solutionPassword: "test",
     color: "#422828",
     inputs: [],
     outputs: [
@@ -35,9 +31,6 @@ export const templatesInitial: BlockTemplate<CVBlockInfo, CVIOPortInfo>[] = [
     type: "NumericInput",
     hardcoded: true,
     customInput: true,
-    code: "",
-    solution: "",
-    solutionPassword: "test",
     color: "#423f28",
     customRenderer: (
       block: Block<CVBlockInfo, CVIOPortInfo>,
@@ -74,9 +67,6 @@ export const templatesInitial: BlockTemplate<CVBlockInfo, CVIOPortInfo>[] = [
     type: "UVInput",
     hardcoded: true,
     customInput: true,
-    code: "",
-    solution: "",
-    solutionPassword: "test",
     color: "#423f28",
     customRenderer: (
       block: Block<CVBlockInfo, CVIOPortInfo>,
@@ -115,9 +105,6 @@ export const templatesInitial: BlockTemplate<CVBlockInfo, CVIOPortInfo>[] = [
     type: "FrameInput",
     hardcoded: true,
     customInput: true,
-    code: "",
-    solution: "",
-    solutionPassword: "test",
     color: "#423f28",
     customRenderer: (
       block: Block<CVBlockInfo, CVIOPortInfo>,
@@ -151,9 +138,6 @@ export const templatesInitial: BlockTemplate<CVBlockInfo, CVIOPortInfo>[] = [
     type: "DisplayFrame",
     hardcoded: true,
     customInput: false,
-    code: "",
-    solution: "",
-    solutionPassword: "test",
     color: "#284042",
     inputs: [
       {
@@ -169,9 +153,6 @@ export const templatesInitial: BlockTemplate<CVBlockInfo, CVIOPortInfo>[] = [
     type: "Game",
     hardcoded: true,
     customInput: false,
-    code: "",
-    solution: "",
-    solutionPassword: "test",
     color: "#284042",
     inputs: [
       {
@@ -182,10 +163,4 @@ export const templatesInitial: BlockTemplate<CVBlockInfo, CVIOPortInfo>[] = [
     ],
     outputs: [],
   },
-].map(template => ({
-  ...template,
-  code: formatCode(template.code),
-  solution: formatCode(template.solution),
-  solutionPassword: "test",
-  fn: getFunctionFromCode(template.code),
-}));
+];

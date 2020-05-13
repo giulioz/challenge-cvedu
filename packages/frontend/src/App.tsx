@@ -31,6 +31,8 @@ import CodeEditor from "./components/CodeEditor";
 import CanvasOutput from "./components/CanvasOutput";
 import Game from "./components/Game";
 import { useTemplates } from "./api/hooks";
+import { initialBlocksPos, initialBlocks } from "./initialState";
+import apiCall from "./api/apiCall";
 import {
   CVBlockInfo,
   CVIOPortInfo,
@@ -130,7 +132,9 @@ export default function App() {
     // setAddBlockDialogOpen(false);
   }, []);
 
-  const [blocks, setBlocks] = useState<Block<CVBlockInfo, CVIOPortInfo>[]>([]);
+  const [blocks, setBlocks] = useState<Block<CVBlockInfo, CVIOPortInfo>[]>(
+    initialBlocks
+  );
   const reHydrateBlocks = useCallback(
     (blocks: Block<CVBlockInfo, CVIOPortInfo>[]) => {
       const nBlocks = blocks.map(b => ({
@@ -148,7 +152,7 @@ export default function App() {
 
   const [blocksPos, setBlocksPos] = useState<
     { uuid: string; x: number; y: number }[]
-  >([]);
+  >(initialBlocksPos);
   usePersistState(blocksPos, setBlocksPos, "blocksPos");
 
   const [links, setLinks] = useState<(Link<CVIOPortInfo> | false)[]>([]);
@@ -236,9 +240,9 @@ export default function App() {
     );
   });
 
-  const [solutionPasswordDialogOpen, setSolutionPasswordDialogOpen] = useState(
-    false
-  );
+  const [solutionPasswordDialogOpen, setSolutionPasswordDialogOpen] = useState<
+    boolean | "wrong"
+  >(false);
   const handleOpenSolutionPasswordDialog = useCallback(
     () => setSolutionPasswordDialogOpen(true),
     [setSolutionPasswordDialogOpen]
@@ -247,31 +251,39 @@ export default function App() {
     () => setSolutionPasswordDialogOpen(false),
     [setSolutionPasswordDialogOpen]
   );
-  const handleSolution = useAutoCallback((password: string) => {
-    if (
-      password ===
-      blocks.find(b => b.uuid === selectedBlockID)?.solutionPassword
-    ) {
-      setBlocks(blocks =>
-        blocks.map(b => {
-          if (b.uuid === selectedBlockID) {
-            try {
-              const code = templates.find(t => t.type === b.type)?.solution;
-              const fn = code && getFunctionFromCode(code);
-              return code && fn ? { ...b, code, fn } : b;
-            } catch (e) {
-              setCurrentError(String(e));
+  const handleSolution = useAutoCallback(async (password: string) => {
+    try {
+      const result = await apiCall("POST /template/:type/solution", {
+        params: { type: selectedBlock.type },
+        body: { password },
+      });
+
+      if (result.status === "ok") {
+        setBlocks(blocks =>
+          blocks.map(b => {
+            if (b.uuid === selectedBlockID) {
+              try {
+                const code = result.data;
+                const fn = code && getFunctionFromCode(code);
+                return code && fn ? { ...b, code, fn } : b;
+              } catch (e) {
+                setCurrentError(String(e));
+              }
+
+              return b;
+            } else {
+              return b;
             }
-
-            return b;
-          } else {
-            return b;
-          }
-        })
-      );
+          })
+        );
+        setSolutionPasswordDialogOpen(false);
+      } else {
+        setSolutionPasswordDialogOpen("wrong");
+      }
+    } catch (e) {
+      setSolutionPasswordDialogOpen("wrong");
+      console.error(e);
     }
-
-    setSolutionPasswordDialogOpen(false);
   });
 
   const tempResultsRef = useRef<{ [key: string]: { [key: string]: any } }>({});
@@ -536,8 +548,12 @@ export default function App() {
         />
 
         <InputDialog
-          open={solutionPasswordDialogOpen}
-          title="Insert password for solution"
+          open={Boolean(solutionPasswordDialogOpen)}
+          title={
+            solutionPasswordDialogOpen === "wrong"
+              ? "Wrong Password!"
+              : "Insert password for solution"
+          }
           actionLabel="Check"
           cancelLabel="Cancel"
           fieldLabel="Password"

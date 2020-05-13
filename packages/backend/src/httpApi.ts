@@ -13,6 +13,17 @@ import { configEndpoints } from "./utils/safeEndpoints";
 
 const basePath = process.env.NODE_ENV === "production" ? "../../" : "../";
 
+function uuidv4() {
+  return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+// Lol, no guessing!
+const unlockPassword = uuidv4();
+
 function maskTemplates(templates: BlockTemplate<CVBlockInfo, CVIOPortInfo>[]) {
   return templates.map(template => ({
     ...template,
@@ -80,14 +91,9 @@ export function initApi() {
       }
     },
     "POST /template/:type/solution": async (req, res) => {
-      const template = await readTemplate(req.params.type);
       const code = await readCodeFile(req.params.type, "codes");
 
-      if (!template) {
-        res.status(404).send({ status: "error", error: "no such template" });
-      }
-
-      if (template && code && template.solutionPassword === req.body.password) {
+      if (code && unlockPassword === req.body.password) {
         res.send({ status: "ok", data: code || "" });
       } else {
         res.status(403).send({ status: "error", error: "wrong password" });
