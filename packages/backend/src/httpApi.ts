@@ -75,6 +75,7 @@ export function initApi() {
   const app = express();
   app.use(bodyParser.json());
   app.use(cors());
+  app.use(express.static(path.join(__dirname, "../../../../frontend/build/")));
 
   configEndpoints(app, {
     "GET /templates": async (req, res) => {
