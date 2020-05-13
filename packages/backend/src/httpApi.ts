@@ -11,7 +11,7 @@ import {
 } from "@challenge-cvedu/common";
 import { configEndpoints } from "./utils/safeEndpoints";
 
-const basePath = process.env.NODE_ENV === "production" ? "../../" : "../";
+const basePath = process.env.NODE_ENV === "production" ? "../../../" : "../";
 
 function uuidv4() {
   return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function(c) {
