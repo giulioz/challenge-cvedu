@@ -1,3 +1,6 @@
+// Enjoy your green screen!
+// Flag: DOTDOTSLASH-GOES-BRRR
+
 function ChromaComposite({
   Mask,
   FrameA,
