@@ -30,7 +30,7 @@ import { InputDialog } from "./components/InputDialog";
 import CodeEditor from "./components/CodeEditor";
 import CanvasOutput from "./components/CanvasOutput";
 import Game from "./components/Game";
-import { useRemoteData, emptyParams } from "./api/hooks";
+import { useTemplates } from "./api/hooks";
 import {
   CVBlockInfo,
   CVIOPortInfo,
@@ -103,15 +103,7 @@ export default function App() {
     setCurrentError(null);
   }
 
-  const remoteTemplates = useRemoteData("GET /templates", emptyParams);
-  const templates = useMemo(
-    () =>
-      remoteTemplates && remoteTemplates.status === "ok"
-        ? [...templatesInitial, ...remoteTemplates.data]
-        : templatesInitial,
-    [remoteTemplates]
-  );
-  // const [templates, setTemplates] = useState(templatesInitial);
+  const templates = useTemplates(templatesInitial);
 
   const [addBlockDialogOpen, setAddBlockDialogOpen] = useState(false);
   const handleOpenAddBlockDialog = useCallback(
@@ -146,7 +138,7 @@ export default function App() {
         ...b,
         inputs: b.inputs,
         outputs: b.outputs,
-        fn: getFunctionFromCode(b.code),
+        fn: code && getFunctionFromCode(b.code),
       }));
       setBlocks(nBlocks);
     },
