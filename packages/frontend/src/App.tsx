@@ -13,6 +13,13 @@ import Button from "@material-ui/core/Button";
 import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import {
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  DialogTitle,
+} from "@material-ui/core";
 import { DiGithubBadge } from "react-icons/di";
 
 import { templatesInitial } from "./templates";
@@ -91,6 +98,30 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
   },
 }));
+
+function IntroDialog() {
+  const [open, setOpen] = useState(true);
+  const handleClose = useAutoCallback(() => setOpen(false));
+
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Welcome to CVEDU!</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          You can develop your computer vision algorithms as blocks, connecting
+          them using your mouse. You can edit block's code clicking on them,
+          using the embedded editor. If you feel really stuck you can check the
+          solution. Ask the teacher for the password.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Start
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
 
 export default function App() {
   const classes = useStyles({});
@@ -461,6 +492,8 @@ export default function App() {
 
         {useAutoMemo(() => (
           <AppBar position="static">
+            <IntroDialog />
+
             <Toolbar variant="dense">
               <Typography variant="h6" className={classes.title}>
                 Block Editor
