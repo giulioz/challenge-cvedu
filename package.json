@@ -18,7 +18,7 @@
   "scripts": {
     "start": "NODE_ENV=production npm run start-backend",
     "start-frontend": "lerna run start --scope @challenge-cvedu/frontend",
-    "start-backend": "lerna run start --scope @challenge-cvedu/backend",
+    "start-backend": "lerna run start --stream --scope @challenge-cvedu/backend",
     "dev": "concurrently --kill-others \"npm run dev-frontend\" \"npm run dev-backend\" \"npm run dev-common\"",
     "dev-frontend": "lerna run dev --scope @challenge-cvedu/frontend",
     "dev-backend": "lerna run dev --scope @challenge-cvedu/backend",

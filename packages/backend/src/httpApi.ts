@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
+import morgan from "morgan";
 
 import {
   BlockTemplate,
@@ -63,6 +64,7 @@ async function readTemplate(name: string) {
 async function readCodeFile(name: string, folder: string) {
   try {
     const p = path.join(__dirname, basePath + `${folder}/`, name + ".ts");
+    console.log("reading", p);
     const content = await fs.promises.readFile(p, "utf-8");
 
     return content;
@@ -76,6 +78,7 @@ export function initApi() {
   app.use(bodyParser.json());
   app.use(cors());
   app.use(express.static(path.join(__dirname, "../../../../frontend/build/")));
+  app.use(morgan("combined"));
 
   configEndpoints(app, {
     "GET /templates": async (req, res) => {
