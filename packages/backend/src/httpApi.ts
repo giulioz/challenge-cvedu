@@ -49,18 +49,6 @@ async function readTemplates() {
   return jsons;
 }
 
-async function readTemplate(name: string) {
-  try {
-    const p = path.join(__dirname, basePath + `templates/`, name + ".json");
-    const content = await fs.promises.readFile(p, "utf-8");
-    const json = JSON.parse(content);
-
-    return json;
-  } catch (err) {
-    return null;
-  }
-}
-
 async function readCodeFile(name: string, folder: string) {
   try {
     const p = path.join(__dirname, basePath + `${folder}/`, name + ".ts");
@@ -95,7 +83,7 @@ export function initApi() {
       }
     },
     "POST /template/:type/solution": async (req, res) => {
-      const code = await readCodeFile(req.params.type, "codes");
+      const code = await readCodeFile(req.params.type, "solutions");
 
       if (code && unlockPassword === req.body.password) {
         res.send({ status: "ok", data: code || "" });

@@ -28,7 +28,7 @@
     "build-common": "lerna run build --scope @challenge-cvedu/common",
     "build-frontend": "lerna run build --scope @challenge-cvedu/frontend",
     "docker-build": "docker build -t challenge-cvedu .",
-    "docker-run": "npm run docker-build && docker-compose up",
+    "docker-run": "npm run docker-build && docker run -p8080:8080 challenge-cvedu",
     "format": "lerna run format",
     "lint": "lerna run lint",
     "test": "lerna run test"
