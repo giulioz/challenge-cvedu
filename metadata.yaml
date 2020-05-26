@@ -1,0 +1,13 @@
+title: "CVedu"
+description: >
+    A teacher built an online code editor to test his students. What if someone finds a way to cheat?
+
+tags: ["web", "file-security"]
+points: 0.5
+flag: "DOTDOTSLASH-GOES-BRRR"
+
+network_info:
+    hostname: cvedu.seclab.dais.unive.it
+    port: 443
+    # Port exposed by the container
+    container_port: 8080
