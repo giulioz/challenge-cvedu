@@ -12,7 +12,7 @@ When selecting (by clicking) a block you are able to edit its Typescript code us
 
 The goal of a normal user is to write the missing parts of the block's code, building a chroma key algorithm.
 
-If the user gets stuck he's able to click the *FORMAT* button, that completes the missing parts of the code, giving the intended solution. This functionality is protected by a password, that is expected to be given to the student by the teacher. To prevent a user from guessing the password (in the security challenge context) it is generated from a random source.
+If the user gets stuck he's able to click the *SOLUTION* button, that completes the missing parts of the code, giving the intended solution. This functionality is protected by a password, that is expected to be given to the student by the teacher. To prevent a user from guessing the password (in the security challenge context) it is generated from a random source.
 
 The challenge that a user has to face is retrieve the solutions for the blocks code, without knowing the password. Once the user reads the solutions he will found the flag as a comment in the code.
 
