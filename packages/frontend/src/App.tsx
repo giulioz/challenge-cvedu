@@ -36,7 +36,6 @@ import {
 import { InputDialog } from "./components/InputDialog";
 import CodeEditor from "./components/CodeEditor";
 import CanvasOutput from "./components/CanvasOutput";
-import Game from "./components/Game";
 import { useTemplates } from "./api/hooks";
 import { initialBlocksPos, initialBlocks, initialLinks } from "./initialState";
 import apiCall from "./api/apiCall";
@@ -325,8 +324,6 @@ export default function App() {
 
   const tempResultsRef = useRef<{ [key: string]: { [key: string]: any } }>({});
 
-  const [currentGameLane, setCurrentGameLane] = useState(0);
-
   const { frameOutputName, blockToDisplay } = useAutoMemo(() => {
     const blockToDisplay = blocks.find(b => b.uuid === selectedBlockID);
     const frameOutputName =
@@ -387,8 +384,6 @@ export default function App() {
           };
         } else if (block.type === "DisplayFrame") {
           tempResultsRef.current[block.uuid] = { Frame: params["Frame"] };
-        } else if (block.type === "Game") {
-          tempResultsRef.current[block.uuid] = { Angle: params["Angle"] };
         } else if (params && !block.hardcoded) {
           tempResultsRef.current[block.uuid] = block.fn(params);
         }
@@ -438,13 +433,6 @@ export default function App() {
           tempResultsRef.current[blockToDisplay.uuid][frameOutputName.label]
         );
       }
-    }
-
-    const gameBlock = blocks.find(b => b.type === "Game");
-    if (gameBlock && tempResultsRef.current[gameBlock.uuid]) {
-      const lane =
-        -(tempResultsRef.current[gameBlock.uuid]["Angle"] - 1.6) * 1.5;
-      setCurrentGameLane(lane);
     }
 
     const displayBlock = blocks.find(b => b.type === "DisplayFrame");
@@ -528,17 +516,7 @@ export default function App() {
         <div className={classes.containerVert}>
           <div className={classes.containerHoriz}>
             <div className={classes.containerHorizHalfCanvas}>
-              {blockToDisplay && blockToDisplay.type === "Game" && (
-                <Game currentLane={currentGameLane} />
-              )}
-
               <CanvasOutput
-                style={{
-                  display:
-                    blockToDisplay && blockToDisplay.type === "Game"
-                      ? "none"
-                      : undefined,
-                }}
                 handler={handleFrame}
                 onError={handleError}
                 title={

@@ -148,19 +148,4 @@ export const templatesInitial: BlockTemplate<CVBlockInfo, CVIOPortInfo>[] = [
     ],
     outputs: [],
   },
-
-  {
-    type: "Game",
-    hardcoded: true,
-    customInput: false,
-    color: "#284042",
-    inputs: [
-      {
-        label: "Angle",
-        type: "input" as const,
-        valueType: "number" as const,
-      },
-    ],
-    outputs: [],
-  },
 ];
