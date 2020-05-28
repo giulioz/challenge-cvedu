@@ -8,17 +8,16 @@ services:
       - 8080:8080
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`app.localhost`)"
-      - "traefik.http.routers.app.entrypoints=web"
+      - "traefik.basic.frontend.rule=Host:example.seclab.dais.unive.it"
+      - "traefik.basic.port=8080"
+      - "traefik.basic.protocol=http"
 
   traefik:
-    image: "traefik:v2.2"
+    image: "traefik:v1.7"
     container_name: "traefik"
     ports:
       - 80:80
     command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
+      - "--docker"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
