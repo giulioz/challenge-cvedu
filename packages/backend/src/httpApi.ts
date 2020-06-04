@@ -1,18 +1,11 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import fs from "fs";
 import path from "path";
 import morgan from "morgan";
 
-import {
-  BlockTemplate,
-  CVBlockInfo,
-  CVIOPortInfo,
-} from "@challenge-cvedu/common";
 import { configEndpoints } from "./utils/safeEndpoints";
-
-const basePath = process.env.NODE_ENV === "production" ? "../../../" : "../";
+import { readCodeFile, readTemplates } from "./db";
 
 function uuidv4() {
   return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function(c) {
@@ -25,42 +18,6 @@ function uuidv4() {
 // Lol, no guessing!
 const unlockPassword = uuidv4();
 
-function maskTemplates(templates: BlockTemplate<CVBlockInfo, CVIOPortInfo>[]) {
-  return templates.map(template => ({
-    ...template,
-    solutionPassword: undefined,
-    solution: undefined,
-    code: undefined,
-  }));
-}
-
-async function readTemplates() {
-  const files = await fs.promises.readdir(
-    path.join(__dirname, basePath + "templates/")
-  );
-  const paths = files.map(file =>
-    path.join(__dirname, basePath + "templates/", file)
-  );
-  const contents = await Promise.all(
-    paths.map(path => fs.promises.readFile(path, "utf-8"))
-  );
-  const jsons = contents.map(s => JSON.parse(s));
-
-  return jsons;
-}
-
-async function readCodeFile(name: string, folder: string) {
-  try {
-    const p = path.join(__dirname, basePath + `${folder}/`, name + ".ts");
-    console.log("reading", p);
-    const content = await fs.promises.readFile(p, "utf-8");
-
-    return content;
-  } catch (err) {
-    return null;
-  }
-}
-
 export function initApi() {
   const app = express();
   app.use(bodyParser.json());
@@ -71,7 +28,7 @@ export function initApi() {
   configEndpoints(app, {
     "GET /templates": async (req, res) => {
       const templates = await readTemplates();
-      res.send({ status: "ok", data: maskTemplates(templates) });
+      res.send({ status: "ok", data: templates });
     },
     "GET /template/:type/code": async (req, res) => {
       const code = await readCodeFile(req.params.type, "codes");

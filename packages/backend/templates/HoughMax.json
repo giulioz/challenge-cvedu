@@ -2,7 +2,6 @@
   "type": "HoughMax",
   "hardcoded": false,
   "customInput": false,
-  "solution": "const a_step = 0.01;\n  const r_step = 4.0;\n  const max_r = 400.0;\n  \n  function HoughMax({\n    Accumulator\n  }: {\n    Accumulator: {\n      data: number[];\n      width: number;\n      height: number;\n      alpha_steps: number;\n      r_steps: number;\n    };\n  }): { A: number; R: number; A_Deg: number } {\n    // Variabili per immagazzinare i massimi trovati\n    let current_a = 0;\n    let current_r = 0;\n    let current_max = 0;\n  \n    for (let r = 0; r < Accumulator.r_steps; r++) {\n      for (let a = 0; a < Accumulator.alpha_steps; a++) {\n        const value = Accumulator.data[a + r * Accumulator.alpha_steps];\n  \n        if (value > current_max) {\n          current_max = value;\n          current_a = a * a_step;\n          current_r = r * r_step - max_r;\n        }\n      }\n    }\n  \n    return { A: current_a, R: current_r, A_Deg: current_a * (180.0 / Math.PI) };\n  }",
   "inputs": [
     {
       "label": "Accumulator",

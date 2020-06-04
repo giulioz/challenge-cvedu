@@ -2,7 +2,6 @@
   "type": "ChromaKeyUV",
   "hardcoded": false,
   "customInput": false,
-  "solution": "function ChromaKeyUV({ YUVFrame, pU,pV,radius }: { YUVFrame: ImageData;pU:number;pV:number;radius:number }): { Mask: {data:boolean[];width:number;height:number} } {\n    // Crea una maschera vuota\n    const data = new Array<boolean>(YUVFrame.width * YUVFrame.height).fill(false);\n  \n    for (let i = 0; i < YUVFrame.data.length; i += 4) {\n      // Estraggo i valori di U e V per quel pixel\n      const U = YUVFrame.data[i + 1];\n      const V = YUVFrame.data[i + 2];\n  \n      // Calcolo la distanza fra il pixel e i valori di u e v desiderati\n      const du = U - pU;\n      const dv = V - pV;\n  \n      // Ne faccio la somma dei quadrati\n      const d2 = du * du + dv * dv;\n  \n      // E calcolo il quadrato del raggio\n      const r2 = radius * radius;\n  \n      // Se la somma dei quadrati è inferiore al quadrato del raggio il pixel è valido\n      data[i / 4] = d2 < r2;\n    }\n  \n    return { Mask:{data,width:YUVFrame.width,height:YUVFrame.height} };\n  }",
   "inputs": [
     {
       "label": "YUVFrame",
