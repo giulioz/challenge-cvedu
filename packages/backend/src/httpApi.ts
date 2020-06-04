@@ -17,6 +17,7 @@ function uuidv4() {
 
 // Lol, no guessing!
 const unlockPassword = uuidv4();
+console.log("Unlock password is", unlockPassword);
 
 export function initApi() {
   const app = express();
@@ -31,21 +32,24 @@ export function initApi() {
       res.send({ status: "ok", data: templates });
     },
     "GET /template/:type/code": async (req, res) => {
-      const code = await readCodeFile(req.params.type, "codes");
-
-      if (!code) {
-        res.status(404).send({ status: "error", error: "no such template" });
-      } else {
-        res.send({ status: "ok", data: code || "" });
+      try {
+        const code = await readCodeFile(req.params.type, "codes");
+        res.send({ status: "ok", data: code });
+      } catch (e) {
+        res.status(500).send({ status: "error", error: e.toString() });
       }
     },
     "POST /template/:type/solution": async (req, res) => {
-      const code = await readCodeFile(req.params.type, "solutions");
+      try {
+        const code = await readCodeFile(req.params.type, "solutions");
 
-      if (code && unlockPassword === req.body.password) {
-        res.send({ status: "ok", data: code || "" });
-      } else {
-        res.status(403).send({ status: "error", error: "wrong password" });
+        if (unlockPassword === req.body.password) {
+          res.send({ status: "ok", data: code });
+        } else {
+          res.status(403).send({ status: "error", error: "Wrong password" });
+        }
+      } catch (e) {
+        res.status(500).send({ status: "error", error: e.toString() });
       }
     },
   });

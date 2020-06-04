@@ -19,13 +19,14 @@ export async function readTemplates() {
 }
 
 export async function readCodeFile(name: string, folder: string) {
+  const filePath = path.join(__dirname, basePath + `${folder}/`, name + ".ts");
+
   try {
-    const p = path.join(__dirname, basePath + `${folder}/`, name + ".ts");
-    console.log("Reading code file:", p);
-    const content = await fs.promises.readFile(p, "utf-8");
+    console.log("Reading code file:", filePath);
+    const content = await fs.promises.readFile(filePath, "utf-8");
 
     return content;
   } catch (err) {
-    return null;
+    throw new Error(`No code found in path ${filePath}.`);
   }
 }
