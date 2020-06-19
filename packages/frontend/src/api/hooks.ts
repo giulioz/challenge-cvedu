@@ -60,7 +60,7 @@ export function useTemplates(
         receivedTemplates.data
           .map(template => template.type)
           .map(type =>
-            apiCall("GET /template/:type/code", {
+            apiCall("GET /codes/:type", {
               params: { type },
               body: null,
             })

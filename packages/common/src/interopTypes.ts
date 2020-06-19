@@ -17,12 +17,12 @@ export interface Endpoints {
     res: ResponseStatus<BlockTemplate<CVBlockInfo, CVIOPortInfo>[]>;
     req: null;
   };
-  "GET /template/:type/code": {
+  "GET /codes/:type": {
     params: { type: string };
     res: ResponseStatus<string>;
     req: {};
   };
-  "POST /template/:type/solution": {
+  "POST /solutions/:type": {
     params: { type: string };
     res: ResponseStatus<string>;
     req: { password: string };

@@ -31,7 +31,7 @@ export function initApi() {
       const templates = await readTemplates();
       res.send({ status: "ok", data: templates });
     },
-    "GET /template/:type/code": async (req, res) => {
+    "GET /codes/:type": async (req, res) => {
       try {
         const code = await readCodeFile(req.params.type, "codes");
         res.send({ status: "ok", data: code });
@@ -39,7 +39,7 @@ export function initApi() {
         res.status(500).send({ status: "error", error: e.toString() });
       }
     },
-    "POST /template/:type/solution": async (req, res) => {
+    "POST /solutions/:type": async (req, res) => {
       try {
         const code = await readCodeFile(req.params.type, "solutions");
 

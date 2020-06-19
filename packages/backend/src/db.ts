@@ -19,7 +19,18 @@ export async function readTemplates() {
 }
 
 export async function readCodeFile(name: string, folder: string) {
+  // Removes path traversal
+  if (name.includes("../")) {
+    name = name.replace("../", "");
+  }
+
   const filePath = path.join(__dirname, basePath + `${folder}/`, name + ".ts");
+
+  if (filePath.indexOf(path.join(__dirname, basePath)) !== 0) {
+    throw new Error(
+      `Cannot read file "${filePath}", outside of app root! Were you trying to perform a path traversal? We got path sanification.`
+    );
+  }
 
   try {
     console.log("Reading code file:", filePath);
@@ -27,6 +38,8 @@ export async function readCodeFile(name: string, folder: string) {
 
     return content;
   } catch (err) {
-    throw new Error(`No code found in path ${filePath}.`);
+    throw new Error(
+      `No code found in path "${filePath}". Were you trying to perform a path traversal? We got path sanification.`
+    );
   }
 }

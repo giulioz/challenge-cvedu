@@ -107,14 +107,23 @@ function IntroDialog() {
       <DialogTitle>Welcome to CVEDU!</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          You can develop your computer vision algorithms as blocks, connecting
-          them using your mouse. You can edit block's code clicking on them,
-          using the embedded editor. If you feel really stuck you can check the
-          solution. Ask the teacher for the password.
+          Develop your Computer Vision algorithms as blocks, connecting them
+          using your mouse. You can edit block's code clicking on them, using
+          the embedded editor.
           <br />
           <br />
           The blocks are already configured for a Chrome Key example. You have
-          to complete the code for ChromaKeyUV and ChromaComposite.
+          to complete the code for ChromaKeyUV and ChromaComposite. Someone said
+          that <b>ChromaComposite</b> is the hardest, test your programming
+          skills!
+          <br />
+          <br />
+          If you feel really stuck you can <b>download the solution</b> from the
+          server.{" "}
+          <i>
+            Ask the teacher for the password, and please don't cheat! The
+            password is impossible to guess!
+          </i>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -289,7 +298,7 @@ export default function App() {
   );
   const handleSolution = useAutoCallback(async (password: string) => {
     try {
-      const result = await apiCall("POST /template/:type/solution", {
+      const result = await apiCall("POST /solutions/:type", {
         params: { type: selectedBlock.type },
         body: { password },
       });
