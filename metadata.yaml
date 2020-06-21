@@ -1,13 +1,15 @@
 title: "CVedu"
 description: >
-    A teacher built an online code editor to test his students. What if someone finds a way to cheat?
+  A teacher built an online code editor to test students coding abilities. What if someone finds a way to cheat?
+  The teacher allowed the students to check the solution using a password, but nobody knows it.
+  What if there is some other way to retrieve the solution code file, even without knowing the password?
 
 tags: ["web", "file-security"]
 points: 0.5
 flag: "DOTDOTSLASH-GOES-BRRR"
 
 network_info:
-    hostname: cvedu.seclab.dais.unive.it
-    port: 443
-    # Port exposed by the container
-    container_port: 8080
+  hostname: cvedu.seclab.dais.unive.it
+  port: 443
+  # Port exposed by the container
+  container_port: 8080
